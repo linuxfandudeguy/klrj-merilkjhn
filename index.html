@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        html, body {
+            height: auto;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+        }
+        .profile-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+        .profile-details {
+            text-align: left;
+        }
+        .profile-details p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .profile-details p span {
+            display: inline-block;
+            width: 80px;
+            font-weight: bold;
+        }
+        .post-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .post {
+            max-width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .post img {
+            width: 100%;
+            height: auto;
+        }
+        .post p {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile">
+            <img id="userPicture" alt="User Picture">
+            <h2 id="userName"></h2>
+            <p id="userDescription"></p> <!-- Added description -->
+        </div>
+        <div class="profile-details">
+            <p><span>Email:</span> <span id="userEmail"></span></p>
+            <p><span>Phone:</span> <span id="userPhone"></span></p>
+            <p><span>Address:</span> <span id="userAddress"></span></p>
+        </div>
+    </div>
+
+    <div class="post-container" id="postContainer"></div>
+
+    <script>
+        // Fetch random user from RandomUser.me
+        fetch('https://randomuser.me/api/')
+            .then(response => response.json())
+            .then(data => {
+                const user = data.results[0];
+                document.getElementById('userPicture').src = user.picture.large;
+                document.getElementById('userName').innerText = `${user.name.first} ${user.name.last}`;
+                document.getElementById('userEmail').innerText = user.email;
+                document.getElementById('userPhone').innerText = user.phone;
+                document.getElementById('userAddress').innerText = `${user.location.street.name} ${user.location.street.number}, ${user.location.city}, ${user.location.state}, ${user.location.country}`;
+
+                // Add user description
+                document.getElementById('userDescription').innerText = generateDescription();
+
+                // Generate a random number of posts between 1 and 10
+                const numPosts = Math.floor(Math.random() * 10) + 1;
+
+                // Fetch random images from Unsplash Source API and generate dummy text for each post
+                for (let i = 0; i < numPosts; i++) {
+                    fetch('https://source.unsplash.com/random')
+                        .then(response => {
+                            const imageUrl = response.url;
+                            const postContainer = document.getElementById('postContainer');
+
+                            // Create post element
+                            const postElement = document.createElement('div');
+                            postElement.classList.add('post');
+
+                            // Create image element
+                            const imageElement = document.createElement('img');
+                            imageElement.src = imageUrl;
+                            postElement.appendChild(imageElement);
+
+                            // Generate dummy text
+                            const dummyText = generateDummyText();
+                            const textElement = document.createElement('p');
+                            textElement.textContent = dummyText;
+                            postElement.appendChild(textElement);
+
+                            // Append post to container
+                            postContainer.appendChild(postElement);
+                        });
+                }
+            });
+
+        // Function to generate 6-word dummy text
+        function generateDummyText() {
+            const dummyWords = [
+                'Lorem ipsum dolor sit amet,',
+                'consectetur adipiscing elit.',
+                'Sed do eiusmod tempor incididunt.',
+                'Ut labore et dolore magna aliqua.',
+                'Ut enim ad minim veniam,',
+                'quis nostrud exercitation ullamco laboris.',
+                'Duis aute irure dolor in reprehenderit.',
+                'Excepteur sint occaecat cupidatat non proident,',
+                'sunt in culpa qui officia deserunt mollit.',
+                'Anim id est laborum.'
+            ];
+            const randomIndex = Math.floor(Math.random() * dummyWords.length);
+            return dummyWords[randomIndex];
+        }
+
+        // Function to generate random description
+        function generateDescription() {
+            const descriptions = [
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.',
+                'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+                'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+            ];
+            const randomIndex = Math.floor(Math.random() * descriptions.length);
+            return descriptions[randomIndex];
+        }
+    </script>
+</body>
+</html>
